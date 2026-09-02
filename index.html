@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartOrder - Gestión de Pedidos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="contenedor">
+        <h1>SmartOrder - Gestión de Pedidos</h1>
+
+        <!-- Campos de entrada de datos -->
+        <input type="text" id="producto" placeholder="Producto">
+        <input type="number" id="cantidad" placeholder="Cantidad">
+        <input type="number" id="precio" placeholder="Precio">
+        
+        <!-- Botones de Gestión -->
+        <div class="botones-accion">
+            <button type="button" onclick="agregarPedido()">Agregar Pedido</button>
+            <button type="button" id="btnTodos" onclick="cambiarFiltro('todos')">Todos</button>
+            <button type="button" id="btnPendientes" onclick="cambiarFiltro('pendientes')">Pendientes</button>
+            <button type="button" id="btnCompletados" onclick="cambiarFiltro('completados')">Completados</button>
+        </div>
+
+        <!-- Botones de Facturación -->
+        <div class="botones-facturacion">
+            <button type="button" id="imprimir" onclick="imprimirFactura()">Imprimir</button>
+            <button type="button" id="limpiar" onclick="limpiarFacturas()">Borrar historial</button>
+        </div>
+
+        <!-- Elementos de visualización de pedidos actuales -->
+        <p id="contador"></p>
+        <p id="total"></p>
+        <ul id="lista"></ul>
+
+        <!-- SECCIÓN DE TICKET (Oculta visualmente o estructurada para impresión) -->
+        <div id="ticket">
+            <h3 id="factura">Factura Nº: 0000</h3>
+            <p id="fecha"></p>
+            <div id="detalle"></div>
+            <p id="totalTicket"></p>
+        </div>
+
+        <!-- Historial de Facturas -->
+        <h2>Historial de Facturas</h2>
+        <ul id="historial"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
