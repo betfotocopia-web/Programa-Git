@@ -1,1 +1,1 @@
-https://github.com/betfotocopia-web/Programa-Git
+https://github.com/betfotocopia-web/Programa-Git.git
