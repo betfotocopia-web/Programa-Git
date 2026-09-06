@@ -1,10 +1,22 @@
+/**
+ * ------------------------------------------------------------------------
+ * SISTEMA DE GESTIÓN Y FACTURACIÓN - SMARTORDER
+ * Módulo de Control de Pedidos y Facturación Dinámica (Frontend)
+ * Autor: Miguel José Cogollo Jiménez
+ * Programa: ADSO - SENA
+ * ------------------------------------------------------------------------
+ */
+
 console.log("¡El script está conectado correctamente!");
+
 // --- 1. VARIABLES GLOBALES ---
+// Almacena el listado de pedidos recuperados del almacenamiento local o un arreglo vacío.
 let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-let filtro = "todos";
+let filtro = "todos"; // Controla el estado actual del filtro visual de la lista.
 
 // --- 2. INICIALIZACIÓN AL CARGAR EL DOM ---
 document.addEventListener("DOMContentLoaded", function() {
+    // Inicializa la base de datos local de facturas si no existe previamente
     if (!localStorage.getItem("facturas")) {
         localStorage.setItem("facturas", JSON.stringify([]));
     }
@@ -14,11 +26,17 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // --- 3. FUNCIÓN AUXILIAR DE GUARDADO ---
+/**
+ * Sincroniza el arreglo actual de pedidos con el almacenamiento local del navegador.
+ */
 function guardar() {
     localStorage.setItem("pedidos", JSON.stringify(pedidos));
 }
 
 // --- 4. GESTIÓN DE PEDIDOS ---
+/**
+ * Captura los datos del formulario de pedidos, valida los campos y los añade al arreglo global.
+ */
 function agregarPedido() {
     let producto = document.getElementById("producto").value;
     let cantidad = document.getElementById("cantidad").value;
@@ -36,12 +54,16 @@ function agregarPedido() {
     guardar();
     mostrarPedidos();
 
-    // Limpiar campos del formulario
+    // Limpiar campos del formulario tras la inserción exitosa
     document.getElementById("producto").value = "";
     document.getElementById("cantidad").value = "";
     document.getElementById("precio").value = "";
 }
 
+/**
+ * Modifica el tipo de filtro activo y actualiza los estilos visuales de los botones correspondientes.
+ * @param {string} tipo - Criterio de filtrado ("todos", "pendientes", "completados").
+ */
 function cambiarFiltro(tipo) {
     filtro = tipo;
     
@@ -60,6 +82,10 @@ function cambiarFiltro(tipo) {
     mostrarPedidos();
 }
 
+/**
+ * Renderiza dinámicamente la lista de pedidos en la interfaz de usuario, 
+ * calculando subtotales, totales generales y aplicando los estados de completado.
+ */
 function mostrarPedidos() {
     let lista = document.getElementById("lista");
     if (!lista) return;
@@ -88,6 +114,7 @@ function mostrarPedidos() {
             texto.style.color = "green";
         }
 
+        // Evento para alternar el estado de completado de un pedido al hacer clic
         texto.onclick = function() {
             pedidos[index].completado = !pedidos[index].completado;
             guardar();
@@ -99,6 +126,7 @@ function mostrarPedidos() {
         boton.style.color = "red";
         boton.style.cursor = "pointer";
 
+        // Evento para eliminar un elemento específico del arreglo de pedidos
         boton.onclick = function(e) {
             e.stopPropagation();
             pedidos.splice(index, 1);
@@ -111,7 +139,7 @@ function mostrarPedidos() {
         lista.appendChild(li);
     });
 
-    // Actualizar Ticket Visual e indicadores
+    // Actualizar Ticket Visual e indicadores en pantalla
     let detalle = document.getElementById("detalle");
     if (detalle) {
         detalle.innerHTML = `<div style="display:flex; border-bottom:1px solid black; font-weight:bold;">
@@ -138,6 +166,10 @@ function mostrarPedidos() {
 }
 
 // --- 5. FACTURACIÓN E HISTORIAL ---
+/**
+ * Genera un número de factura consecutivo, calcula totales, 
+ * almacena la transacción en el historial y despliega la ventana de impresión del ticket.
+ */
 function imprimirFactura() {
     let historial = JSON.parse(localStorage.getItem("facturas")) || [];
     let ultimoNumero = historial.length > 0 ? parseInt(historial[historial.length - 1].numero) : 0;
@@ -148,7 +180,6 @@ function imprimirFactura() {
     
     let totalFactura = pedidos.reduce((acc, p) => acc + (p.cantidad * p.precio), 0);
     
-    // Inyectar el total calculado en el elemento del ticket para la impresión
     let totalTicketElem = document.getElementById("totalTicket");
     if (totalTicketElem) {
         totalTicketElem.textContent = "Total a pagar: $" + totalFactura;
@@ -175,6 +206,9 @@ function imprimirFactura() {
     }
 }
 
+/**
+ * Muestra el listado histórico de facturas emitidas almacenadas en el navegador.
+ */
 function mostrarHistorial() {
     let historial = JSON.parse(localStorage.getItem("facturas")) || [];
     let listaHistorial = document.getElementById("historial");
@@ -193,11 +227,18 @@ function mostrarHistorial() {
     });
 }
 
+/**
+ * Limpia por completo el historial de facturación del almacenamiento local.
+ */
 function limpiarFacturas() {
     localStorage.removeItem("facturas");
     location.reload();
 }
 
+/**
+ * Despliega una alerta emergente con el desglose detallado de una factura específica del historial.
+ * @param {Object} factura - Objeto que contiene los datos de la factura seleccionada.
+ */
 function verDetalleFactura(factura) {
     let detalle = "FACTURA #" + factura.numero + "\n";
     detalle += "Fecha: " + factura.fecha + "\n\n";
@@ -210,14 +251,17 @@ function verDetalleFactura(factura) {
     detalle += "\nTOTAL: $" + factura.total;
     alert(detalle);
 }
-// js/script.js
 
-// Función para el catálogo
+// --- 6. MÓDULO DE CATÁLOGO Y VALIDACIONES ---
+/**
+ * Notifica al usuario la adición de un producto desde el catálogo general.
+ * @param {string} producto - Nombre del producto seleccionado.
+ */
 function agregarAlPedido(producto) {
     alert("¡" + producto + " agregado a su orden!");
 }
 
-// Validación de formulario
+// Validación de formulario de registro de clientes o pedidos
 document.getElementById('orderForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const cliente = document.getElementById('nombre').value;
